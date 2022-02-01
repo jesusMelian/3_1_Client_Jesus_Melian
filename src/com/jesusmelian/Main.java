@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -18,15 +19,11 @@ public class Main {
         final int PORT = 8080;
         ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
-        boolean seguir = true;
         boolean first = true;
         Scanner sc = new Scanner(System.in);
-        String[] listMsg = null;
+        ArrayList<String> listMsg = new ArrayList<String>();
         String user = null;
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        Date date = new Date();
         String returnValue = null;
-        System.out.println("Hora actual: " + dateFormat.format(date));
 
         Socket socket = new Socket("localhost", PORT);
 
@@ -34,48 +31,49 @@ public class Main {
         ois = new ObjectInputStream(socket.getInputStream());
 
 
-        while(seguir) {
+
             try {
-                if(first) {
+
                     System.out.println("INTRODUZCA EL NOMBRE DE USUARIO: ");
                     user = sc.nextLine();
                     if (user != null) {
                         oos.writeObject(user);
-                        first = false;
-                        listMsg = (String[]) ois.readObject();
+                        listMsg = (ArrayList<String>) ois.readObject();
                     }
-                }else{
-                    if(listMsg != null){
+
+                    if(listMsg != null) {
                         System.out.println("LISTA DE MENSAJES: ");
-                        for(String msgs: listMsg){
+                        for (String msgs : listMsg) {
                             System.out.println(msgs);
                         }
+                    }
+
+                    String msg = "";
+
+                    //BUCLE HASTA QUE SE PONGA BYE
+                    while(!msg.equals("bye")){
                         if(user != null) {
                             System.out.println("INTRODUZCA EL MENSAJE: debe comenzar con'message:'");
-                            String msg = sc.nextLine();
+                            msg = sc.nextLine();
                             oos.writeObject(msg);
                             //Leo lo que obtengo del servidor
                             returnValue = (String) ois.readObject();
+                            System.out.println("EL SERVIDOR DEVUELVE: "+returnValue);
+                            listMsg.add(returnValue);
+                            System.out.println("ALMACENO: "+listMsg.get(listMsg.size()-1));
 
-                            //COMPRUEBO SI) FINALIZO
-                            if (returnValue.equalsIgnoreCase("GoodBye")) {
-                                if (oos != null) oos.close();
-                                if (ois != null) ois.close();
-                                if (socket != null) socket.close();
-                                seguir = false;
-                                System.out.println("Conexión cerrada!");
-                            }else{
-                                //AÑADO AL ARRAY DE STRING EL MENSAJE INTRODUCIDO
-                                listMsg[listMsg.length-1]="<"+user+">" + " : [" + date +"]"+ "<"+returnValue+">";
-                                System.out.println("El servidor responde: " + returnValue);
-                                System.out.println("ALMACENO: "+listMsg[listMsg.length-1]);
-                            }
                         }
                     }
-                }
+
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+            }finally {
+                if (oos != null) oos.close();
+                if (ois != null) ois.close();
+                if (socket != null) socket.close();
+                System.out.println("Conexión cerrada!");
+
             }
-        }
+
     }
 }
