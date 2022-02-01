@@ -53,6 +53,7 @@ public class Main {
                     //BUCLE HASTA QUE SE PONGA BYE
                     while(!msg.equals("bye")){
                         if(user != null) {
+
                             System.out.println("INTRODUZCA EL MENSAJE: debe comenzar con'message:'");
                             msg = sc.nextLine();
                             oos.writeObject(msg);
@@ -62,6 +63,12 @@ public class Main {
                             listMsg.add(returnValue);
                             System.out.println("ALMACENO: "+listMsg.get(listMsg.size()-1));
 
+                            if(listMsg != null) {
+                                System.out.println("LISTA DE MENSAJES: ");
+                                for (String msgs : listMsg) {
+                                    System.out.println(msgs);
+                                }
+                            }
                         }
                     }
 
