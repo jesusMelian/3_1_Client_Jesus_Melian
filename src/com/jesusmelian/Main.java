@@ -21,7 +21,7 @@ public class Main {
         ObjectInputStream ois = null;
         boolean first = true;
         Scanner sc = new Scanner(System.in);
-        ArrayList<String> listMsg = new ArrayList<String>();
+        String listMsg = null;
         String user = null;
         String returnValue = null;
 
@@ -38,14 +38,14 @@ public class Main {
                     user = sc.nextLine();
                     if (user != null) {
                         oos.writeObject(user);
-                        listMsg = (ArrayList<String>) ois.readObject();
+                        listMsg = (String) ois.readObject();
                     }
 
                     if(listMsg != null) {
-                        System.out.println("LISTA DE MENSAJES: ");
-                        for (String msgs : listMsg) {
-                            System.out.println(msgs);
-                        }
+                        System.out.println("-----------------------------------------------------------");
+                        System.out.println(listMsg);
+                        System.out.println("-----------------------------------------------------------");
+
                     }
 
                     String msg = "";
@@ -58,16 +58,12 @@ public class Main {
                             msg = sc.nextLine();
                             oos.writeObject(msg);
                             //Leo lo que obtengo del servidor
-                            returnValue = (String) ois.readObject();
-                            System.out.println("EL SERVIDOR DEVUELVE: "+returnValue);
-                            listMsg.add(returnValue);
-                            System.out.println("ALMACENO: "+listMsg.get(listMsg.size()-1));
+                            listMsg = (String) ois.readObject();
 
                             if(listMsg != null) {
-                                System.out.println("LISTA DE MENSAJES: ");
-                                for (String msgs : listMsg) {
-                                    System.out.println(msgs);
-                                }
+                                System.out.println("-----------------------------------------------------------");
+                                System.out.println(listMsg);
+                                System.out.println("-----------------------------------------------------------");
                             }
                         }
                     }
